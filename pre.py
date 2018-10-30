@@ -9,13 +9,15 @@ import matplotlib
 #import seaborn as sns
 #from Ipython.display import display
 #from mpl_toolkits.basemap import Basemap
-#from wordcloud import WordCloud, STOPWORDS
+from wordcloud import WordCloud, STOPWORDS
 
 #nltk
-#from nltk.stem import WordNetLemmatizer
-#from nltk.sentiment.vader import SentimentIntensityAnalyzer
-#from nltk.sentiment.util import *
-#from nltk import tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.util import *
+from nltk import tokenize
+from nltk.stem.porter import *
+from wordcloud import WordCloud
 
 matplotlib.style.use('ggplot')
 pd.options.mode.chained_assignment = None
@@ -30,7 +32,7 @@ tweets['handles'] =  ''
 
 
 #remove handles
-for i in range(len(tweets['text'])):
+for i in range(2):
     try:
         tweets['handles'][i] = tweets['text'].str.split(' ')[i][0]
     except AttributeError:    
@@ -38,19 +40,41 @@ for i in range(len(tweets['text'])):
 
 
 #Preprocessing handles. select handles contains 'RT @'
-for i in range(len(tweets['text'])):
+for i in range(2):
     if tweets['handles'].str.contains('@')[i]  == False:
         tweets['handles'][i] = 'other'
         
 # remove URLs, RTs, and twitter handles
-for i in range(len(tweets['text'])):
+for i in range(2):
     tweets['text'][i] = " ".join([word for word in tweets['text'][i].split()
                                 if 'http' not in word and '@' not in word and '<' not in word])
-
+#remove special characters, and numbers
 tweets['text'] = tweets['text'].apply(lambda x: re.sub('[!@#$:).;,?&]', '', x.lower()))
-tweets['text'] = tweets['text'].apply(lambda x: re.sub('  ', ' ', x))
+tweets['text'] = tweets['text'].str.replace("[^a-zA-Z#]", " ")
+
+
+
+#removes short words 
+tweets['text'] = tweets['text'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>3]))
+
+#tokenization
+tokens = tweets['text'].apply(lambda x: x.split())
+tokens.head()
+
+
+#stemming
+#stemmer = PorterStemmer()
+
+#tokens = tokens.apply(lambda x: [stemmer.stem(i) for i in x]) 
+#tokens.head()
+
+#putting tokens back together
+#for i in range(2):
+    #tokens[i] = ' '.join(tokens[i])
+
+#tweets['text'] = tokens
+
+
 
 hi = tweets['text'][1]
 print (hi)
-
-
