@@ -47,7 +47,10 @@ for i in range(len(tweets['text'])):
     tweets['text'][i] = " ".join([word for word in tweets['text'][i].split()
                                 if 'http' not in word and '@' not in word and '<' not in word])
 
-tweets['text'][1]
-test = tweets['text'][1]
+tweets['text'] = tweets['text'].apply(lambda x: re.sub('[!@#$:).;,?&]', '', x.lower()))
+tweets['text'] = tweets['text'].apply(lambda x: re.sub('  ', ' ', x))
 
-print (test)
+hi = tweets['text'][1]
+print (hi)
+
+
