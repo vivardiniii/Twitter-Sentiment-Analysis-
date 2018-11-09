@@ -11,6 +11,7 @@ import matplotlib
 #from mpl_toolkits.basemap import Basemap
 from wordcloud import WordCloud, STOPWORDS
 
+
 #nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -24,44 +25,42 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
 
-
-tweets = pd.read_csv('tweets_all.csv', encoding = "ISO-8859-1")
-
+tweets = pd.read_csv('new.csv', encoding = "ISO-8859-1")
 
 tweets['handles'] =  ''
 
-
 #remove handles
-for i in range(len(tweets['text'])):
+#len(tweets['text'])
+for i in range(len(tweets['SentimentText'])):
     try:
-        tweets['handles'][i] = tweets['text'].str.split(' ')[i][0]
+        tweets['handles'][i] = tweets['SentimentText'].str.split(' ')[i][0]
     except AttributeError:    
         tweets['handles'][i] = 'other'
 #len(tweets['text'])
 
 #Preprocessing handles. select handles contains 'RT @'
-for i in range(len(tweets['text'])):
+for i in range(len(tweets['SentimentText'])):
     if tweets['handles'].str.contains('@')[i]  == False:
         tweets['handles'][i] = 'other'
         
 # remove URLs, RTs, and twitter handles
-for i in range(len(tweets['text'])):
-    tweets['text'][i] = " ".join([word for word in tweets['text'][i].split()
+for i in range(len(tweets['SentimentText'])):
+	
+    tweets['SentimentText'][i] = " ".join([word for word in tweets['SentimentText'][i].split()
                                 if 'http' not in word and '@' not in word and '<' not in word])
 #remove special characters, and numbers
-tweets['text'] = tweets['text'].apply(lambda x: re.sub('[!@$:).;,?&]', '', x.lower()))
-tweets['text'] = tweets['text'].str.replace("[^a-zA-Z#]", " ")
+tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: re.sub('[!@$:).;,?&]', '', x.lower()))
+tweets['SentimentText'] = tweets['SentimentText'].str.replace("[^a-zA-Z#]", " ")
 
 #removes hashtags
-tweets['text'] = tweets['text'].apply(lambda x: re.sub(r'\B(\#[a-zA-Z]+\b)', '', x.lower()))
-
+tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: re.sub(r'\B(\#[a-zA-Z]+\b)', '', x.lower()))
 
 
 #removes short words 
-tweets['text'] = tweets['text'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>3]))
+tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>2]))
 
 #tokenization
-tokens = tweets['text'].apply(lambda x: x.split())
+tokens = tweets['SentimentText'].apply(lambda x: x.split())
 #tokens.head()
 
 
@@ -77,16 +76,25 @@ tokens = tweets['text'].apply(lambda x: x.split())
 
 #tweets['text'] = tokens
 
-
-
-
-#hi = tweets['text']
-#print (hi)
+"""hi = tweets['SentimentText']
+print (hi)
 
 
 with open('pre_tweets.csv', "w") as outfile:
-	for entries in tweets['text']:
+	for entries in tweets['SentimentText']:
 		outfile.write(entries)
 		outfile.write("\n")
 
+"""
+with open('pre_tweets.csv', "w") as outfile:
+    writer = csv.writer(outfile)
+    writer.writerows(zip(tweets['Sentiment'], tweets['SentimentText']))
+
+
+import fileinput
+
+for line in fileinput.input(files=['pre_tweets.csv'], inplace=True):
+	if fileinput.isfirstline():
+		print ('Sentiment,Text')
+	print (line),
 
