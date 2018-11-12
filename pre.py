@@ -19,6 +19,7 @@ from nltk.sentiment.util import *
 from nltk import tokenize
 from nltk.stem.porter import *
 from wordcloud import WordCloud
+from nltk.corpus import stopwords 
 
 matplotlib.style.use('ggplot')
 pd.options.mode.chained_assignment = None
@@ -63,6 +64,17 @@ tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: ' '.join([w fo
 tokens = tweets['SentimentText'].apply(lambda x: x.split())
 #tokens.head()
 
+tweets['newsSentimentText'] = ''
+
+stop = stopwords.words('english') 
+tweets['newSentimentText'] = tweets['SentimentText'].apply(lambda x: " ".join(x for x in x.split() if x not in stop)) 
+
+ps = PorterStemmer()
+tweets['newSentimentText'] = tweets['newSentimentText'].apply(lambda x: ' '.join([ps.stem(word) for word in x.split() ]))
+
+
+
+
 
 #stemming
 #stemmer = PorterStemmer()
@@ -88,7 +100,7 @@ with open('pre_tweets.csv', "w") as outfile:
 """
 with open('pre_tweets.csv', "w") as outfile:
     writer = csv.writer(outfile)
-    writer.writerows(zip(tweets['Sentiment'], tweets['SentimentText']))
+    writer.writerows(zip(tweets['Sentiment'], tweets['newSentimentText']))
 
 
 import fileinput
