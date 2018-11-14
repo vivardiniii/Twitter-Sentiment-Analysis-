@@ -26,7 +26,14 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
 
-tweets = pd.read_csv('new.csv', encoding = "ISO-8859-1")
+import fileinput
+
+for line in fileinput.input(files=['pretest.csv'], inplace=True):
+    if fileinput.isfirstline():
+        print ('SentimentText')
+    print (line),
+
+tweets = pd.read_csv('pretest.csv', encoding = "ISO-8859-1")
 
 tweets['handles'] =  ''
 
@@ -49,10 +56,12 @@ for i in range(len(tweets['SentimentText'])):
 	
     tweets['SentimentText'][i] = " ".join([word for word in tweets['SentimentText'][i].split()
                                 if 'http' not in word and '@' not in word and '<' not in word])
-#remove special characters, and numbers
-tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: re.sub('[!@$:).;,?&#]', '', x.lower()))
-tweets['SentimentText'] = tweets['SentimentText'].str.replace("[^a-zA-Z#]", " ")
 
+#remove special characters, and numbers
+tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: re.sub('[!@$:).;,?&#]', ' ', x.lower()))
+tweets['SentimentText'] = tweets['SentimentText'].str.replace("[^a-zA-Z]", " ")
+
+#tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: re.sub(r'\B(\#[a-zA-Z]+\b)', '', x.lower()))
 
 #removes short words 
 tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>2]))
@@ -69,41 +78,16 @@ tweets['newSentimentText'] = tweets['SentimentText'].apply(lambda x: " ".join(x 
 ps = PorterStemmer()
 tweets['newSentimentText'] = tweets['newSentimentText'].apply(lambda x: ' '.join([ps.stem(word) for word in x.split() ]))
 
-
-
-
-
-#stemming
-#stemmer = PorterStemmer()
-
-#tokens = tokens.apply(lambda x: [stemmer.stem(i) for i in x]) 
-#tokens.head()
-
-#putting tokens back together
-#for i in range(2):
-    #tokens[i] = ' '.join(tokens[i])
-
-#tweets['text'] = tokens
-
-"""hi = tweets['SentimentText']
-print (hi)
-
-
-with open('pre_tweets.csv', "w") as outfile:
-	for entries in tweets['SentimentText']:
+with open('pretest.csv', "w") as outfile:
+	for entries in tweets['newSentimentText']:
 		outfile.write(entries)
 		outfile.write("\n")
 
 """
-with open('pre_tweets.csv', "w") as outfile:
-    writer = csv.writer(outfile)
-    writer.writerows(zip(tweets['Sentiment'], tweets['newSentimentText']))
 
 
-import fileinput
-
-for line in fileinput.input(files=['pre_tweets.csv'], inplace=True):
-	if fileinput.isfirstline():
-		print ('Sentiment,Text')
-	print (line),
-
+for line in fileinput.input(files=['pretest.csv'], inplace=True):
+    if fileinput.isfirstline():
+        print ('SentimentText')
+    print (line),
+"""

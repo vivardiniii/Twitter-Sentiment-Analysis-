@@ -2,41 +2,6 @@ from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt 
 import pandas as pd 
 from sklearn.svm import SVC
-
-df = pd.read_csv(r"pre_tweets.csv", encoding ="ISO-8859-1") 
-comments= ' '
-stopwords = set(STOPWORDS) 
-  
-# iterate through the csv file 
-for val in df.Text: 
-      
-    # typecaste each val to string 
-    val = str(val) 
-  
-    # split the value 
-    tokens = val.split() 
-      
-    # Converts each token into lowercase 
-    for i in range(len(tokens)): 
-        tokens[i] = tokens[i].lower() 
-          
-    for words in tokens: 
-        comments = comments + words + ' '
-  
-  
-wordcloud = WordCloud(width = 800, height = 800,
-                background_color = 'white', 
-                stopwords = stopwords, 
-                min_font_size = 10).generate(comments) 
-  
-# plot the WordCloud image                        
-plt.figure(figsize = (8, 8), facecolor = None) 
-plt.imshow(wordcloud) 
-plt.axis("off") 
-plt.tight_layout(pad = 0) 
-  
-plt.show() 
-
 import numpy as np
 
 from glob import glob
@@ -97,13 +62,42 @@ print (predictions)
 print (accuracy_score(y_test, predictions))
 
 
+test_data = pd.read_csv("pretest.csv")
+## for transforming the whole train data ##
+#train_counts = count_vect.fit_transform(x_train.values.astype('U'))
+#train_tfidf = transformer.fit_transform(train_counts)
+
+## for transforming the test data ##
+test_counts = count_vect.transform(test_data['sentimenttext'].values.astype('U'))
+test_tfidf = transformer.transform(test_counts)
+
+## fitting the model on the transformed train data ##
+#model.fit(train_tfidf,train_data['label'])
+
+## predicting the results ##
+predictions1 = model.predict(test_tfidf)
+print(predictions1)
+
+pos = 0
+neg = 0
+
+for i in predictions1:
+    if i == 1:
+        pos = pos+1
+    elif i == 0:
+        neg = neg+1
+
+totpos = pos*100/(pos+neg)
+totneg = neg*100/(pos+neg)
+
+print ("Percentage Positive Tweets: ", totpos)
+print ("Percentage Negative Tweets: ", totneg)
 
 
 
+df = pd.read_csv("pretest.csv")
+
+df ['pred'] = predictions1
 
 
-
-
-
-
-
+df.to_csv('pretest.csv')
