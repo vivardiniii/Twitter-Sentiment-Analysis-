@@ -2,10 +2,10 @@ import csv
 import fileinput
 
 #Variables that contains the user credentials to access Twitter API
-access_token = "1059659088630472705-NjDqXDizTfCcc6I0MWZvNQUOCWaT3D"
-access_token_secret = "ktqme1A9XFTgQqnvRjvE4qocyFtCRemySAYHtxZiQebP8"
-consumer_key = "oJQwawI8gkBXThXQrtnU7TJc7"
-consumer_secret = "O8SHXEyECumFOkedjoy65ANHqiXusHDgT5vUHfMBtdzlu3w0uc"
+access_token = "1059659088630472705-YgDGgPwcx4DxCkIksDCRJ35hREbKNp"
+access_token_secret = "PHqFvPv8nvy5bM9gzXCRf2cVu1DwQgRzLO9FOYzSEVKLk"
+consumer_key = "xbNCpYwzHJ8vQ7FTlnceHOPS4"
+consumer_secret = "Qr6euKSDCmZ0svNOKPAdtEF3l9u8tsyyb0eOtAl9JceKkxJsHf"
 
 
 import twitter
@@ -19,7 +19,9 @@ hashtags_to_track = [
     "#mood",
 ]
 
-stream = api.GetStreamFilter(track=hashtags_to_track)
+LANGUAGES = ['en']
+
+stream = api.GetStreamFilter(track=hashtags_to_track, languages=LANGUAGES)
 
 
 with open('test_tweets.csv', 'w') as csv_file:

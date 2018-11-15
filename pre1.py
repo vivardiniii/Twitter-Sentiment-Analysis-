@@ -41,7 +41,7 @@ tweets['handles'] =  ''
 #len(tweets['text'])
 for i in range(len(tweets['SentimentText'])):
     try:
-        tweets['handles'][i] = tweets['SentimentText'].str.split(' ')[i][0]
+        tweets['handles'][i] = tweets['SentimentText'].str.split(' ').iloc[i][0]
     except AttributeError:    
         tweets['handles'][i] = 'other'
 #len(tweets['text'])
@@ -91,3 +91,9 @@ for line in fileinput.input(files=['pretest.csv'], inplace=True):
         print ('SentimentText')
     print (line),
 """
+
+
+for line in fileinput.input(files=['pretest.csv'], inplace=True):
+    if fileinput.isfirstline():
+        print ('sentimenttext')
+    print (line),

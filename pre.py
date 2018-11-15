@@ -26,7 +26,7 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
 
-tweets = pd.read_csv('new.csv', encoding = "ISO-8859-1")
+tweets = pd.read_csv('new1.csv', encoding = "ISO-8859-1")
 
 tweets['handles'] =  ''
 
